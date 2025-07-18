@@ -10,8 +10,8 @@ def exp_decay(t, A, tau, offset):
 
 
 def main():
-    # Load CSV with columns 'time' and 'voltage'
-    data = pd.read_csv('cs_data.csv')
+    # Load Excel file with columns 'time' and 'voltage'
+    data = pd.read_excel('sample_data.xlsx')
     t = data['time'].values
     v = data['voltage'].values
 
@@ -24,13 +24,24 @@ def main():
     t_fit = np.linspace(t.min(), t.max(), 500)
     v_fit = exp_decay(t_fit, *popt)
 
-    # Plot the data and the fitted curve
-    plt.figure()
-    plt.scatter(t, v, label='Data')
-    plt.plot(t_fit, v_fit, color='red', label='Fit')
-    plt.xlabel('Time')
-    plt.ylabel('Voltage')
-    plt.legend()
+    # Calculate residuals
+    residuals = v - exp_decay(t, *popt)
+
+    # Plot the data, the fitted curve and residuals
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(6, 8), sharex=True)
+
+    ax1.scatter(t, v, label='Data')
+    ax1.plot(t_fit, v_fit, color='red', label='Fit')
+    ax1.set_ylabel('Voltage')
+    ax1.legend()
+
+    ax2.scatter(t, residuals, color='purple', label='Residuals')
+    ax2.axhline(0, color='grey', linestyle='--')
+    ax2.set_xlabel('Time')
+    ax2.set_ylabel('Residual')
+    ax2.legend()
+
+    plt.tight_layout()
     plt.show()
 
 
